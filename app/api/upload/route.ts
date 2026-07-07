@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getUserSession } from "@/lib/auth";
-import { processReceiptImage } from "@/lib/groq";
+import { processReceiptImage } from "@/lib/ai";
 
 export async function POST(request: NextRequest) {
   try {

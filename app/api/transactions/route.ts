@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import type { ClassifiedItem } from "@/lib/groq";
+import { ClassifiedItem } from "@/lib/ai";
 
 // GET /api/transactions — lấy danh sách giao dịch
 export async function GET(request: NextRequest) {
@@ -98,7 +98,15 @@ export async function POST(request: NextRequest) {
           amount: Number(amt) || 0,
           quantity: Number(qty) || 1,
           description: desc,
-          transactionDate: (item.date && !isNaN(new Date(item.date).getTime())) ? new Date(item.date) : new Date(),
+          transactionDate: (() => {
+            if (!item.date) return new Date();
+            const parsed = new Date(item.date);
+            if (isNaN(parsed.getTime())) return new Date();
+            // Nếu ngày trên hóa đơn cách hôm nay quá 1 năm → dùng ngày hôm nay
+            const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+            const diff = Math.abs(Date.now() - parsed.getTime());
+            return diff > ONE_YEAR_MS ? new Date() : parsed;
+          })(),
           receiptImageUrl: imageUrl,
           isManual: false,
           categoryId: category.id,

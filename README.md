@@ -1,56 +1,89 @@
-# 🧾 Ledger AI - Personal Finance & Business Intelligence 🚀
+# 🧾 Ledger AI — Sổ Thu Chi Thông Minh
 
-Ledger AI là một hệ thống quản lý tài chính và sổ sách cá nhân/cửa hàng chuyên nghiệp, được phát triển nội bộ để tối ưu hóa việc theo dõi thu chi. Dự án được tích hợp trí tuệ nhân tạo (AI) tiên tiến giúp tự động nhận diện, phân tích và phân loại các giao dịch từ hình ảnh hóa đơn.
+Ledger AI là ứng dụng quản lý tài chính cá nhân/cửa hàng nhỏ, tích hợp **trí tuệ nhân tạo đa tầng** giúp tự động đọc hóa đơn, phân loại thu chi và theo dõi dòng tiền theo thời gian thực.
 
-> **Lưu ý:** Đây là một hệ thống riêng tư (Private System), được thiết kế và tối ưu hóa đặc quyền dành cho mục đích cá nhân. Không chấp nhận các yêu cầu đóng góp mã nguồn (Pull Requests) bên ngoài.
-
----
-
-## ✨ Tính Năng Cốt Lõi
-
-- **🤖 Tích Hợp AI (Groq Vision):** AI tự động trích xuất thông tin hóa đơn (mô tả, số tiền, phân loại Thu/Chi, danh mục) chỉ trong vài giây thông qua xử lý ảnh.
-- **🔐 Bảo Mật Cao Cấp (Supabase Auth):** Xác thực an toàn tuyệt đối với hệ thống quản lý JWT và session bảo mật (Email/Mật khẩu hoặc Google OAuth).
-- **📊 Báo Cáo Trực Quan:** Hệ thống biểu đồ thống kê chuyên sâu, theo dõi doanh thu, chi phí và lợi nhuận thời gian thực.
-- **⚡ Hiệu Năng Vượt Trội:** Tận dụng tối đa sức mạnh của Next.js 14+ (App Router) với Server Actions, đảm bảo trải nghiệm SSR/CSR mượt mà nhất.
-- **💅 Giao Diện Masterpiece:** Thiết kế giao diện mang hơi hướng tương lai (Deep Dark Mode & Glassmorphism), tối ưu UI/UX trên mọi thiết bị.
+> **Lưu ý:** Đây là hệ thống riêng tư (Private System), thiết kế cho mục đích cá nhân. Không chấp nhận Pull Requests từ bên ngoài.
 
 ---
 
-## 🛠️ Nền Tảng Công Nghệ
+## ✨ Tính Năng Nổi Bật
 
-Hệ thống được xây dựng trên một ngăn xếp (stack) công nghệ hiện đại và mạnh mẽ nhất:
+- **🤖 AI Đọc Hóa Đơn 3 Tầng Dự Phòng**
+  - **Tầng 1 — Gemini 2.5 Flash** (Google): Nhanh nhất, đọc chữ Việt cực chính xác, Single-Pass (vừa đọc vừa phân loại trong 1 lần gọi).
+  - **Tầng 2 — Llama 4 Maverick** (OpenRouter): Tự động kích hoạt khi Gemini quá tải.
+  - **Tầng 3 — Groq Llama Vision** (Groq): Backup cuối cùng, siêu nhanh, không bao giờ bị gián đoạn.
+  - Nếu Tầng 1 lỗi → Tầng 2 tự bật. Tầng 2 lỗi → Tầng 3 tự bật. **Người dùng không hề biết.**
 
-- **Frontend:** [Next.js](https://nextjs.org/) (React), Vanilla CSS (Modules) với hiệu ứng animation độc bản.
-- **Backend/API:** Next.js Route Handlers & Server Actions.
-- **Cơ Sở Dữ Liệu:** [PostgreSQL](https://www.postgresql.org/) lưu trữ phân tán trên nền tảng [Supabase](https://supabase.com/).
-- **ORM:** [Prisma](https://www.prisma.io/).
-- **Xác Thực (Authentication):** Supabase Auth SSR.
-- **AI / LLM:** [Groq API](https://groq.com/) (Mô hình Vision siêu tốc độ).
-- **Lưu Trữ Đám Mây:** Supabase Storage cho dữ liệu hình ảnh, hóa đơn.
+- **📅 Trích Xuất Ngày Tháng Thông Minh:** AI tự đọc ngày trên hóa đơn và điền sẵn vào form. Nếu ngày hóa đơn quá xa trong quá khứ (> 1 năm), hệ thống tự dùng ngày hôm nay.
+
+- **🔐 Xác Thực Bảo Mật Cao:** Supabase Auth với Email/Mật khẩu và Google OAuth. Cookie bảo mật, không lộ thông tin hệ thống.
+
+- **📊 Báo Cáo Trực Quan:** Biểu đồ Thu/Chi theo tháng, tổng số dư, thống kê lợi nhuận, chuỗi ngày nhập liệu.
+
+- **📱 Skeleton Loading & PWA:** Giao diện có hiệu ứng loading mượt mà, hỗ trợ cài đặt như ứng dụng native trên điện thoại.
+
+- **✏️ Xác Nhận & Chỉnh Sửa Trước Khi Lưu:** Sau khi AI đọc xong, người dùng có thể xem lại, sửa mô tả, số tiền, số lượng, ngày tháng, loại và danh mục trước khi lưu vào database.
 
 ---
 
-## 📂 Cấu Trúc Hệ Thống Chính
+## 🛠️ Công Nghệ Sử Dụng
+
+| Lớp | Công nghệ |
+|-----|-----------|
+| **Frontend** | Next.js (App Router), Vanilla CSS Modules, Recharts |
+| **Backend/API** | Next.js Route Handlers |
+| **Database** | PostgreSQL (Supabase) + Prisma ORM |
+| **Xác thực** | Supabase Auth SSR |
+| **AI — Tầng 1** | Google Gemini 2.5 Flash |
+| **AI — Tầng 2** | Llama 4 Maverick (OpenRouter) |
+| **AI — Tầng 3** | Groq Llama 4 Scout Vision |
+| **Lưu trữ ảnh** | Supabase Storage |
+
+---
+
+## 📂 Cấu Trúc Thư Mục
 
 ```
 📦 Ledger-AI
- ┣ 📂 app               # Chứa các Server Components & Routing của Next.js
- ┃ ┣ 📂 api             # RESTful API nội bộ (transactions, user, upload)
- ┃ ┣ 📂 auth            # Logic xử lý callback OAuth (Supabase)
- ┃ ┣ 📂 dashboard       # Core Dashboard: Thống kê, Quản lý giao dịch, Biểu đồ
- ┃ ┣ 📂 login           # Module xác thực & đăng ký (Dark Theme)
- ┃ ┗ 📂 update-password # Khôi phục & cập nhật mật khẩu an toàn
- ┣ 📂 components        # Thư viện UI Components dùng chung (Cards, Charts, Icons)
- ┣ 📂 lib               # Lớp trừu tượng cho các dịch vụ bên thứ ba (Prisma, Supabase, Groq)
- ┣ 📂 prisma            # Cấu trúc Database Schema
- ┗ 📜 package.json      # Quản lý thư viện hệ thống
+ ┣ 📂 app
+ ┃ ┣ 📂 api              # REST API (transactions, upload, user)
+ ┃ ┣ 📂 dashboard        # Trang chính: Tổng quan, Giao dịch, Báo cáo, Hồ sơ
+ ┃ ┗ 📂 login            # Đăng nhập / Đăng ký
+ ┣ 📂 components         # UI Components (Charts, ConfirmForm, StatCard...)
+ ┣ 📂 lib                # Clients (Supabase, Prisma, AI module)
+ ┃ ┗ 📄 ai.ts            # Engine AI 3 tầng dự phòng
+ ┣ 📂 prisma             # Database Schema
+ ┗ 📜 package.json
+```
+
+---
+
+## ⚙️ Cài Đặt Môi Trường (`.env`)
+
+```env
+# AI
+GROQ_API_KEY=...
+GEMINI_API_KEY=...
+OPENROUTER_API_KEY=...
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+
+# Database
+DATABASE_URL=...
+DIRECT_URL=...
+
+# Next.js
+NEXTAUTH_SECRET=...
 ```
 
 ---
 
 ## 🔒 Giấy Phép & Quyền Sở Hữu
 
-Đây là phần mềm thuộc quyền sở hữu cá nhân. Mọi hành vi sao chép, phân phối hoặc tái sử dụng mã nguồn mà không có sự cho phép đều bị nghiêm cấm. 
+Phần mềm thuộc quyền sở hữu cá nhân. Mọi hành vi sao chép, phân phối hoặc tái sử dụng mà không có sự cho phép đều bị nghiêm cấm.
 
 ---
 *Developed by [truonga-dev](https://github.com/truonga-dev) | Private & Confidential*

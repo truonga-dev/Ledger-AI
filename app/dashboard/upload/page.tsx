@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import ConfirmForm from "@/components/upload/ConfirmForm";
 import { IconCamera, IconScan, IconPlus, IconImage } from "@/components/icons";
 import styles from "./page.module.css";
-import type { ClassifiedItem } from "@/lib/groq";
+import { OcrResult, ClassifiedItem } from "@/lib/ai";
 
 type UploadState = "idle" | "uploading" | "confirming" | "saving";
 
@@ -202,7 +202,7 @@ export default function UploadPage() {
               <IconBolt size={26} />
             </div>
             <p className={styles.loadingText}>AI đang đọc hóa đơn...</p>
-            <p className={styles.loadingSub}>Groq Vision đang phân tích</p>
+            <p className={styles.loadingSub}>Gemini 2.5 Flash đang phân tích...</p>
             <div className={styles.dots}>
               <span /><span /><span />
             </div>

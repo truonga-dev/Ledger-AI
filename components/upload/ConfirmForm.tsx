@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ClassifiedItem } from "@/lib/groq";
+import { ClassifiedItem } from "@/lib/ai";
 import { IconX, IconPlus, IconCheck, IconCamera, IconWarning } from "@/components/icons";
 import styles from "./ConfirmForm.module.css";
 
@@ -117,6 +117,17 @@ export default function ConfirmForm({ items: initialItems, confidence, preview, 
                   onChange={(e) => update(i, "quantity", e.target.value === "" ? "" : Number(e.target.value))}
                   min={1}
                   placeholder="1"
+                />
+              </div>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.field} style={{ flex: 1 }}>
+                <label className="label">Ngày tháng (Tùy chọn)</label>
+                <input
+                  className="input"
+                  type="date"
+                  value={item.date || ""}
+                  onChange={(e) => update(i, "date", e.target.value)}
                 />
               </div>
             </div>
