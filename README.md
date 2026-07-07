@@ -24,6 +24,10 @@ Ledger AI là ứng dụng quản lý tài chính cá nhân/cửa hàng nhỏ, t
 
 - **✏️ Xác Nhận & Chỉnh Sửa Trước Khi Lưu:** Sau khi AI đọc xong, người dùng có thể xem lại, sửa mô tả, số tiền, số lượng, ngày tháng, loại và danh mục trước khi lưu vào database.
 
+- **📥 Xuất Báo Cáo Excel:** Hỗ trợ xuất toàn bộ dữ liệu giao dịch hoặc lọc theo từng tháng ra file Excel (.xlsx) với định dạng chuẩn, làm nổi bật màu sắc thu/chi để dễ dàng đối soát.
+
+- **🌓 Chế Độ Sáng/Tối (Dark Mode):** Cung cấp công tắc chuyển đổi giữa giao diện Sáng và Tối (hoặc theo hệ thống) để tăng trải nghiệm người dùng và bảo vệ mắt.
+
 ---
 
 ## 🛠️ Công Nghệ Sử Dụng
