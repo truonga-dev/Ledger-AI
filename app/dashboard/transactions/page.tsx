@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import { IconTrendUp, IconTrendDown, IconCamera, IconReceipt, IconIncome, IconExpense } from "@/components/icons";
 import TransactionListClient from "@/components/dashboard/TransactionListClient";
+import ExportExcelButton from "@/components/dashboard/ExportExcelButton";
 
 function fmtVND(n: number) {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(".0", "") + " tỷ";
@@ -70,7 +71,7 @@ export default async function TransactionsPage({
 
   const hasMore = transactions.length < totalCount;
 
-  // Lấy tổng thu chi (chỉ tính trên bản ghi đã tải về hoặc nên tính tổng toàn bộ? Nên tính tổng toàn bộ)
+  // Lấy tổng thu chi
   const totalStats = await prisma.transaction.groupBy({
     by: ['type'],
     where: {
@@ -97,16 +98,18 @@ export default async function TransactionsPage({
       <div className={styles.header}>
         <div className={styles.titleRow}>
           <h1 className={styles.title}>Giao dịch</h1>
-          <select
-            className={styles.monthPicker}
-            defaultValue={monthStr}
-            // server-side — navigation via link below
-            disabled
-          >
-            {monthOptions.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <ExportExcelButton monthStr={monthStr} />
+            <select
+              className={styles.monthPicker}
+              defaultValue={monthStr}
+              disabled
+            >
+              {monthOptions.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Month nav links */}

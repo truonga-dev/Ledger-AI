@@ -8,7 +8,7 @@ import QuickInsight from "@/components/dashboard/QuickInsight";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 import styles from "./page.module.css";
 import { IconTrendUp, IconTrendDown, IconTrophy, IconWarning } from "@/components/icons";
-
+import ThemeToggle from "@/components/ThemeToggle";
 function getMonthRange(date: Date) {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
   const end = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59);
@@ -71,19 +71,37 @@ export default async function DashboardPage() {
     orderBy: { transactionDate: "desc" },
   });
 
-  // Tất cả (cho All-time balance)
-  const allTx = await prisma.transaction.findMany({
+  // Tất cả (cho All-time balance & Streak)
+  // Lấy danh sách ngày để tính streak (chỉ lấy transactionDate cho nhẹ)
+  const allDates = await prisma.transaction.findMany({
     where: { user: { email: user.email! } },
-    select: { amount: true, type: true, transactionDate: true },
+    select: { transactionDate: true },
+    orderBy: { transactionDate: 'desc' },
   });
 
   // Tháng trước (cho % change)
   const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const prevMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
-  const prevTx = await prisma.transaction.findMany({
-    where: { user: { email: user.email! }, transactionDate: { gte: prevMonthStart, lte: prevMonthEnd } },
-    select: { amount: true, type: true },
-  });
+
+  // Tính tổng số dư bằng Prisma aggregate thay vì tải toàn bộ giao dịch
+  const [allThuAgg, allChiAgg, prevThuAgg, prevChiAgg] = await Promise.all([
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { user: { email: user.email! }, type: "THU" }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { user: { email: user.email! }, type: "CHI" }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { user: { email: user.email! }, type: "THU", transactionDate: { gte: prevMonthStart, lte: prevMonthEnd } }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { user: { email: user.email! }, type: "CHI", transactionDate: { gte: prevMonthStart, lte: prevMonthEnd } }
+    })
+  ]);
 
   // User data
   const dbUser = await prisma.user.findUnique({
@@ -95,10 +113,10 @@ export default async function DashboardPage() {
   const totalThu  = monthTx.filter(t => t.type === "THU").reduce((s, t) => s + Number(t.amount), 0);
   const totalChi  = monthTx.filter(t => t.type === "CHI").reduce((s, t) => s + Number(t.amount), 0);
   const loiLo     = totalThu - totalChi;
-  const allTimeBal = allTx.reduce((s, t) => t.type === "THU" ? s + Number(t.amount) : s - Number(t.amount), 0);
+  const allTimeBal = Number(allThuAgg._sum.amount || 0) - Number(allChiAgg._sum.amount || 0);
 
-  const prevThu = prevTx.filter(t => t.type === "THU").reduce((s, t) => s + Number(t.amount), 0);
-  const prevChi = prevTx.filter(t => t.type === "CHI").reduce((s, t) => s + Number(t.amount), 0);
+  const prevThu = Number(prevThuAgg._sum.amount || 0);
+  const prevChi = Number(prevChiAgg._sum.amount || 0);
   const thuChange = prevThu > 0 ? ((totalThu - prevThu) / prevThu) * 100 : 0;
   const chiChange = prevChi > 0 ? ((totalChi - prevChi) / prevChi) * 100 : 0;
 
@@ -116,7 +134,7 @@ export default async function DashboardPage() {
   const topCat = Object.values(catMap).sort((a, b) => b.total - a.total)[0];
 
   // Streak
-  const streak = calcStreak(allTx.map(t => new Date(t.transactionDate)));
+  const streak = calcStreak(allDates.map(t => new Date(t.transactionDate)));
 
   // Meta
   const shopName  = dbUser?.shopName ?? user.email!.split("@")[0];
@@ -141,12 +159,15 @@ export default async function DashboardPage() {
           <div className={styles.logoWordmark}>
             Ledger<span>AI</span>
           </div>
-          <div className={styles.heroAvatar}>
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" />
-            ) : avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" />
-            ) : initials}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <ThemeToggle />
+            <div className={styles.heroAvatar}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" />
+              ) : avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" />
+              ) : initials}
+            </div>
           </div>
         </div>
 

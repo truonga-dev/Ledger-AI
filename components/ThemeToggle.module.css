@@ -1,0 +1,30 @@
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.toggleBtn:active {
+  transform: scale(0.95);
+}
+
+.togglePlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  opacity: 0.5;
+}
