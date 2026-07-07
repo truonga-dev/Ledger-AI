@@ -1,0 +1,211 @@
+/* Dashboard home page */
+.page {
+  padding: 0 0 calc(var(--nav-height) + 12px);
+  animation: fadeUp 0.35s ease;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(145deg, #1e1b4b 0%, #312e81 45%, #4338ca 100%);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative blobs */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(129,140,248,0.25) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(196,181,253,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Top bar: logo + avatar */
+.heroTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 44px 20px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.logoWordmark {
+  font-size: 1.125rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.04em;
+  font-family: 'Inter', sans-serif;
+}
+
+.logoWordmark span {
+  color: #a5b4fc;
+}
+
+.heroAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: white;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+.heroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Greeting row */
+.heroBody {
+  padding: 12px 20px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.heroGreeting {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.heroTitle {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+}
+
+.heroPeriod {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+
+/* Balance glass card inside hero */
+.heroBalanceWrap {
+  padding: 12px 20px 48px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Quick Actions */
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 20px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.quickBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+  backdrop-filter: blur(8px);
+}
+
+.quickBtn:active {
+  transform: scale(0.96);
+  background: rgba(255,255,255,0.1);
+}
+
+.quickIcon {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.quickLabel {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Stats floating over hero ─────────────────────────────────── */
+.statsWrap {
+  padding: 0 16px;
+  margin-top: -36px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* ── Content sections ─────────────────────────────────────────── */
+.content {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.seeAll {
+  font-size: 0.8125rem;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

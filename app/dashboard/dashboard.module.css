@@ -1,0 +1,15 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg);
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  padding-bottom: calc(var(--nav-height) + 12px);
+  overflow-y: auto;
+}

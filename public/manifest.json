@@ -1,0 +1,12 @@
+{
+  "name": "LedgerAI — Sổ Kế Toán",
+  "short_name": "LedgerAI",
+  "description": "Sổ kế toán thông minh cho hộ kinh doanh nhỏ",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "categories": ["finance", "business"],
+  "lang": "vi"
+}

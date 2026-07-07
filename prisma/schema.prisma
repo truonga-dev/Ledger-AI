@@ -1,0 +1,98 @@
+// Prisma Schema — LedgerAI
+// Chạy: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum TransactionType {
+  THU  // Thu nhập
+  CHI  // Chi tiêu
+}
+
+enum ShopType {
+  TAP_HOA    // Tiệm tạp hóa
+  QUAN_AN    // Quán ăn / nhà hàng
+  SAP_CHO    // Sạp chợ
+  DICH_VU    // Dịch vụ
+  KHAC       // Khác
+}
+
+enum Role {
+  USER
+  GUEST
+  ADMIN
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  role         Role          @default(USER)
+  shopName     String
+  shopType     ShopType      @default(KHAC)
+  phone        String?
+  avatarUrl    String?
+  backgroundUrl String?
+  logoUrl      String?
+  monthlyBudget BigInt?           // Ngân sách chi tiêu tháng (VND), null = không đặt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  transactions Transaction[]
+  categories   Category[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type            TransactionType
+  amount          Decimal         @db.Decimal(15, 0)  // VND — không có số thập phân
+  description     String
+  transactionDate DateTime
+
+  // Quan hệ với danh mục
+  categoryId      String?
+  category        Category?       @relation(fields: [categoryId], references: [id])
+
+  // AI OCR data
+  receiptImageUrl String?         // URL ảnh trên Supabase Storage
+  rawOcrText      String?         // Text thô AI đọc được — để debug
+  confidence      Float?          // Độ tin cậy AI (0.0 - 1.0)
+  isManual        Boolean         @default(false)  // true = nhập tay, false = AI đọc
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId, transactionDate])
+  @@index([userId, type])
+  @@map("transactions")
+}
+
+model Category {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name         String          // "Tiền hàng", "Điện nước", "Lương nhân viên"...
+  type         TransactionType
+  isDefault    Boolean         @default(false)  // true = danh mục hệ thống, false = người dùng tạo
+  emoji        String?         // Icon hiển thị: "🛒", "⚡", "👤"...
+
+  transactions Transaction[]
+
+  @@unique([userId, name, type])
+  @@map("categories")
+}

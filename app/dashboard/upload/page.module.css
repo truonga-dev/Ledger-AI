@@ -1,0 +1,260 @@
+.page {
+  padding: 0 0 24px;
+  animation: fadeUp 0.28s ease;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.header {
+  padding: 24px 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* ── Body ────────────────────────────────────────────────────────── */
+.body {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Upload Actions ────────────────────────────────────────────────── */
+.uploadActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.uploadActionBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.uploadActionBtn:hover {
+  border-color: var(--primary);
+  background: var(--brand-50);
+}
+.uploadActionBtn:active {
+  transform: scale(0.97);
+}
+
+.actionIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+}
+.actionIconWrap.camera {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-brand);
+}
+.actionIconWrap.gallery {
+  background: var(--brand-100);
+  color: var(--primary);
+}
+
+.actionLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.actionHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── Error ───────────────────────────────────────────────────────── */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: var(--danger-light);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(244,63,94,0.15);
+}
+
+/* ── Manual entry button ─────────────────────────────────────────── */
+.manualBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1.5px dashed var(--border-strong);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.manualBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ── Tips ────────────────────────────────────────────────────────── */
+.tips {
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+
+.tipsTitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.tipsList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tipsItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tipIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: white;
+  color: var(--primary);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Loading state ───────────────────────────────────────────────── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+.preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.loadingBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border-radius: var(--radius);
+  padding: 36px 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.aiOrb {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(99,102,241,0.35); }
+  50% { transform: scale(1.05); box-shadow: 0 12px 32px rgba(99,102,241,0.5); }
+}
+
+.loadingText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.01em;
+}
+
+.loadingSub {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dots span {
+  width: 7px;
+  height: 7px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+  opacity: 0.7;
+}
+
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

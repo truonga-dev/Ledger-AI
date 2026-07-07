@@ -1,0 +1,128 @@
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 99px 99px 0 0;
+}
+
+.thu::before  { background: linear-gradient(90deg, #10b981, #34d399); }
+.chi::before  { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+.neutral::before { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+
+.fullWidth {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.amount {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.full {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Badge % change */
+.badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badgeUp   { background: var(--success-light); color: var(--success); }
+.badgeDown { background: var(--danger-light);  color: var(--danger);  }
+
+/* Large card (hero balance) */
+.largeCard {
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.largeCard::before { display: none; }
+
+.largeTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.largeLabel {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.65);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.largeAmount {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.largeFull {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+}
