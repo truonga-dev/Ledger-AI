@@ -41,7 +41,7 @@ export default function ConfirmForm({ items: initialItems, confidence, preview, 
   function addItem() {
     setItems((prev) => [
       ...prev,
-      { description: "", amount: 0, date: null, type: "CHI", category: "Khác - Chi" },
+      { description: "", amount: 0, quantity: 1, date: null, type: "CHI", category: "Khác - Chi" },
     ]);
   }
 
@@ -88,30 +88,44 @@ export default function ConfirmForm({ items: initialItems, confidence, preview, 
               />
             </div>
 
-            {/* Số tiền */}
-            <div className={styles.field}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <label className="label">Số tiền (VND)</label>
-                {item.amount > 0 && (
-                  <span className={styles.formattedAmount}>
-                    {item.amount.toLocaleString("vi-VN")} đ
-                  </span>
-                )}
+            {/* Số tiền & Số lượng */}
+            <div className={styles.row}>
+              <div className={styles.field} style={{ flex: 2 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label className="label">Số tiền (VND)</label>
+                  {item.amount > 0 && (
+                    <span className={styles.formattedAmount}>
+                      {item.amount.toLocaleString("vi-VN")} đ
+                    </span>
+                  )}
+                </div>
+                <input
+                  className="input"
+                  type="number"
+                  value={item.amount === null || item.amount === undefined ? "" : item.amount}
+                  onChange={(e) => update(i, "amount", e.target.value === "" ? "" : Number(e.target.value))}
+                  min={0}
+                  placeholder="0"
+                />
               </div>
-              <input
-                className="input"
-                type="number"
-                value={item.amount === null || item.amount === undefined ? "" : item.amount}
-                onChange={(e) => update(i, "amount", e.target.value === "" ? "" : Number(e.target.value))}
-                min={0}
-                placeholder="0"
-              />
-              <div className={styles.quickAdd}>
-                <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 10000)}>+10k</button>
-                <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 50000)}>+50k</button>
-                <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 100000)}>+100k</button>
-                <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 500000)}>+500k</button>
+              <div className={styles.field} style={{ flex: 1 }}>
+                <label className="label">Số lượng</label>
+                <input
+                  className="input"
+                  type="number"
+                  value={item.quantity === null || item.quantity === undefined ? "" : item.quantity}
+                  onChange={(e) => update(i, "quantity", e.target.value === "" ? "" : Number(e.target.value))}
+                  min={1}
+                  placeholder="1"
+                />
               </div>
+            </div>
+
+            <div className={styles.quickAdd}>
+              <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 10000)}>+10k</button>
+              <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 50000)}>+50k</button>
+              <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 100000)}>+100k</button>
+              <button type="button" onClick={() => update(i, "amount", (Number(item.amount) || 0) + 500000)}>+500k</button>
             </div>
 
             {/* THU / CHI */}

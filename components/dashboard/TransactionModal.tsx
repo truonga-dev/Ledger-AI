@@ -8,6 +8,7 @@ type Transaction = {
   id: string;
   type: string;
   amount: number;
+  quantity?: number;
   description: string;
   transactionDate: Date;
   isManual: boolean;
@@ -25,6 +26,7 @@ export default function TransactionModal({
 }) {
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState(transaction.amount.toString());
+  const [quantity, setQuantity] = useState((transaction.quantity || 1).toString());
   const [description, setDescription] = useState(transaction.description);
   const [type, setType] = useState(transaction.type);
   const [date, setDate] = useState(new Date(transaction.transactionDate).toISOString().split('T')[0]);
@@ -40,6 +42,7 @@ export default function TransactionModal({
         body: JSON.stringify({
           id: transaction.id,
           amount: Number(amount),
+          quantity: Number(quantity) || 1,
           description,
           type,
           transactionDate: new Date(date).toISOString(),
@@ -88,15 +91,29 @@ export default function TransactionModal({
             </select>
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>Số tiền (VNĐ)</label>
-            <input 
-              type="number" 
-              value={amount} 
-              onChange={e => setAmount(e.target.value)} 
-              className={styles.input}
-              required
-            />
+          <div style={{ display: "flex", gap: "12px" }}>
+            <div className={styles.inputGroup} style={{ flex: 2 }}>
+              <label>Số tiền (VNĐ)</label>
+              <input 
+                type="number" 
+                value={amount} 
+                onChange={e => setAmount(e.target.value)} 
+                className={styles.input}
+                required
+              />
+            </div>
+
+            <div className={styles.inputGroup} style={{ flex: 1 }}>
+              <label>Số lượng</label>
+              <input 
+                type="number" 
+                value={quantity} 
+                onChange={e => setQuantity(e.target.value)} 
+                className={styles.input}
+                min={1}
+                required
+              />
+            </div>
           </div>
 
           <div className={styles.inputGroup}>

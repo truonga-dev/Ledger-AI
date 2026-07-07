@@ -27,8 +27,9 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Bỏ qua xác thực nếu có cookie dev_bypass
-  const hasDevBypass = request.cookies.get("dev_bypass")?.value === "1";
+  // Bỏ qua xác thực nếu có cookie dev_bypass (CHỈ ở development)
+  const isDev = process.env.NODE_ENV === "development";
+  const hasDevBypass = isDev && request.cookies.get("dev_bypass")?.value === "1";
 
   const {
     data: { user },

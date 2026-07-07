@@ -170,7 +170,7 @@ export default function UploadPage() {
             onClick={() => {
               setPreview(null);
               setConfidence(1);
-              setItems([{ description: "", amount: 0, date: null, type: "CHI", category: "Khác - Chi" }]);
+              setItems([{ description: "", amount: 0, quantity: 1, date: null, type: "CHI", category: "Khác - Chi" }]);
               setState("confirming");
             }}
           >

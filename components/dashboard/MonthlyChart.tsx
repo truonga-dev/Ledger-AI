@@ -100,7 +100,7 @@ export default function MonthlyChart({ transactions }: { transactions: Tx[] }) {
         </div>
       </div>
 
-      <div style={{ padding: "16px 8px 8px" }}>
+      <div style={{ padding: "16px 8px 8px 0" }}>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={data} barGap={4}>
             <defs>
@@ -115,7 +115,7 @@ export default function MonthlyChart({ transactions }: { transactions: Tx[] }) {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} unit="tr" width={36} />
+            <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} unit="tr" width={55} />
             <Tooltip content={<CustomTooltip />} />
             <Area type="monotone" dataKey="Thu" stroke="#10b981" strokeWidth={2.5} fill="url(#gradThu)" dot={false} activeDot={{ r: 5 }} />
             <Area type="monotone" dataKey="Chi" stroke="#f43f5e" strokeWidth={2.5} fill="url(#gradChi)" dot={false} activeDot={{ r: 5 }} />

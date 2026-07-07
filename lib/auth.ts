@@ -6,7 +6,9 @@ export async function getUserSession() {
   let { data: { user } } = await supabase.auth.getUser();
 
   const cookieStore = await cookies();
-  const hasDevBypass = cookieStore.get("dev_bypass")?.value === "1";
+  // Dev bypass chỉ hoạt động ở môi trường development
+  const isDev = process.env.NODE_ENV === "development";
+  const hasDevBypass = isDev && cookieStore.get("dev_bypass")?.value === "1";
   
   if (!user && hasDevBypass) {
     user = { email: "test@ledger.ai" } as any;

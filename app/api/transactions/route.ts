@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       const catName = item.category || "Khác";
       const desc = item.description || "Giao dịch AI";
       const amt = item.amount || 0;
+      const qty = item.quantity || 1;
 
       // Use findFirst instead of findUnique to avoid compound unique name issues
       let category = await prisma.category.findFirst({
@@ -95,6 +96,7 @@ export async function POST(request: NextRequest) {
           userId: dbUser!.id,
           type: item.type as "THU" | "CHI",
           amount: Number(amt) || 0,
+          quantity: Number(qty) || 1,
           description: desc,
           transactionDate: (item.date && !isNaN(new Date(item.date).getTime())) ? new Date(item.date) : new Date(),
           receiptImageUrl: imageUrl,
@@ -108,7 +110,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ count: created.length, success: true });
   } catch (err: any) {
     console.error("POST /api/transactions error:", err);
-    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
@@ -148,7 +150,7 @@ export async function PUT(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await request.json();
-    const { id, amount, description, type, transactionDate } = body;
+    const { id, amount, quantity, description, type, transactionDate } = body;
 
     if (!id) return NextResponse.json({ error: "Thiếu id" }, { status: 400 });
 
@@ -165,9 +167,12 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: {
         amount: Number(amount),
+        quantity: quantity !== undefined ? Number(quantity) : undefined,
         description,
         type: type as "THU" | "CHI",
-        transactionDate: new Date(transactionDate)
+        transactionDate: transactionDate && !isNaN(new Date(transactionDate).getTime())
+          ? new Date(transactionDate)
+          : existing.transactionDate,
       }
     });
 

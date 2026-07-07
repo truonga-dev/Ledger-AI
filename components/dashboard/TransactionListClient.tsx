@@ -19,6 +19,7 @@ type Transaction = {
   id: string;
   type: string;
   amount: number;
+  quantity?: number;
   description: string;
   transactionDate: Date;
   isManual: boolean;
@@ -70,7 +71,9 @@ export default function TransactionListClient({
               {t.type === "THU" ? <IconTrendUp size={18} /> : <IconTrendDown size={18} />}
             </div>
             <div className={styles.itemLeft}>
-              <span className={styles.itemDesc}>{t.description}</span>
+              <span className={styles.itemDesc}>
+                {t.quantity && t.quantity > 1 ? `${t.quantity}x ` : ""}{t.description}
+              </span>
               <div className={styles.itemMeta}>
                 <span>{t.category?.name ?? "Khác"}</span>
                 <span>·</span>

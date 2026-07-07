@@ -5,6 +5,7 @@ import Groq from "groq-sdk";
 export interface OcrItem {
   description: string;
   amount: number; // Đơn vị: VND (đồng)
+  quantity: number; // Số lượng
   date: string | null; // "YYYY-MM-DD" hoặc null nếu không thấy
 }
 
@@ -27,7 +28,7 @@ const groq = new Groq({
 // ─── Prompt Templates ─────────────────────────────────────────────────────────
 
 const OCR_SYSTEM_PROMPT = `Bạn là một trợ lý đọc hóa đơn và sổ ghi chép cho hộ kinh doanh nhỏ tại Việt Nam.
-Nhiệm vụ: Đọc kỹ ảnh hóa đơn hoặc ghi chú viết tay, trích xuất TẤT CẢ các khoản mục có số tiền.
+Nhiệm vụ: Đọc kỹ ảnh hóa đơn hoặc ghi chú viết tay, trích xuất TẤT CẢ các khoản mục có số tiền và số lượng.
 
 Quy tắc đọc số tiền Việt Nam:
 - "k" hoặc "K" = nghìn đồng (50k = 50,000 đồng)
@@ -35,12 +36,17 @@ Quy tắc đọc số tiền Việt Nam:
 - "đ" hoặc không có đơn vị = đồng
 - Chuẩn hóa TẤT CẢ amounts về đơn vị đồng (VND số nguyên)
 
+Trường quantity (số lượng):
+- Nếu hóa đơn có ghi rõ số lượng (vd: x2, 3 cái, 5kg), hãy trích xuất vào trường quantity.
+- Nếu không ghi rõ, mặc định quantity là 1.
+
 Trả về JSON theo format sau, KHÔNG thêm giải thích:
 {
   "items": [
     {
       "description": "Mô tả khoản mục (giữ nguyên chữ gốc từ ảnh)",
       "amount": 50000,
+      "quantity": 2,
       "date": "2024-01-15 hoặc null nếu không có ngày trong ảnh"
     }
   ],
@@ -72,6 +78,7 @@ Trả về JSON sau, KHÔNG thêm giải thích:
   {
     "description": "...",
     "amount": 0,
+    "quantity": 1,
     "date": "...",
     "type": "CHI",
     "category": "Tiền hàng"

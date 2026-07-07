@@ -60,6 +60,7 @@ model Transaction {
 
   type            TransactionType
   amount          Decimal         @db.Decimal(15, 0)  // VND — không có số thập phân
+  quantity        Int             @default(1)         // Số lượng
   description     String
   transactionDate DateTime
 

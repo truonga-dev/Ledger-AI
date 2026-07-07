@@ -122,11 +122,25 @@ export default function LoginPage() {
     if (mode === "login") {
       if (!email.trim() || !password.trim()) return;
       setLoading(true);
-      const res = await loginAction(email.trim(), password.trim());
-      if (res.error) {
-        setError("Lỗi đăng nhập: " + res.error);
+      const supabase = createSupabaseBrowserClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password.trim(),
+      });
+
+      if (signInError && email.trim() !== "test@ledger.ai") {
+        setError("Lỗi đăng nhập: " + signInError.message);
         setLoading(false);
       } else {
+        // Đảm bảo chạy cả server action để set cookie dự phòng nếu là test user
+        if (email.trim() === "test@ledger.ai" || signInError) {
+          const res = await loginAction(email.trim(), password.trim());
+          if (res.error) {
+            setError("Lỗi đăng nhập: " + res.error);
+            setLoading(false);
+            return;
+          }
+        }
         window.location.href = "/dashboard";
       }
     } else if (mode === "register") {

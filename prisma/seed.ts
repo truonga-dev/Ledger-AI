@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 config({ path: '.env' });
-import { prisma } from './lib/prisma';
+import { prisma } from '../lib/prisma';
 
 async function main() {
   const user = await prisma.user.findFirst();

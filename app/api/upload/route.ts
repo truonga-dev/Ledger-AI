@@ -17,6 +17,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Không có ảnh" }, { status: 400 });
     }
 
+    // Kiểm tra kích thước file (tối đa 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "Ảnh quá lớn, tối đa 10MB" }, { status: 400 });
+    }
+
     // Upload ảnh lên Supabase Storage
     const adminClient = createSupabaseAdminClient();
     const fileName = `${user.id}/${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, "_")}`;

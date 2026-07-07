@@ -24,9 +24,9 @@ export async function GET(request: Request) {
             try {
               cookiesToSet.forEach(({ name, value, options }) => {
                 // Set globally
-                cookieStore.set(name, value, options);
+                cookieStore.set(name, value, { ...options, secure: false });
                 // Queue for explicit attachment to NextResponse
-                pendingCookies.push({ name, value, options });
+                pendingCookies.push({ name, value, options: { ...options, secure: false } });
               });
             } catch (error) {
               // Ignore Server Component errors
