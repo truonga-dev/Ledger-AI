@@ -141,4 +141,41 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
+// PUT /api/transactions — cập nhật giao dịch
+export async function PUT(request: NextRequest) {
+  try {
+    const user = await getUserSession();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { id, amount, description, type, transactionDate } = body;
+
+    if (!id) return NextResponse.json({ error: "Thiếu id" }, { status: 400 });
+
+    // Verify ownership implicitly
+    const existing = await prisma.transaction.findFirst({
+      where: { id, user: { email: user.email! } }
+    });
+
+    if (!existing) {
+      return NextResponse.json({ error: "Không tìm thấy giao dịch" }, { status: 404 });
+    }
+
+    const updated = await prisma.transaction.update({
+      where: { id },
+      data: {
+        amount: Number(amount),
+        description,
+        type: type as "THU" | "CHI",
+        transactionDate: new Date(transactionDate)
+      }
+    });
+
+    return NextResponse.json({ success: true, transaction: updated });
+  } catch (err: any) {
+    console.error("PUT /api/transactions error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
 

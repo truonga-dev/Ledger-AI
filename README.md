@@ -99,7 +99,8 @@ Mở trình duyệt và truy cập `http://localhost:3000`.
  ┃ ┣ 📂 api             # Các RESTful API nội bộ (transactions, user, upload)
  ┃ ┣ 📂 auth            # Route callback để xử lý Supabase OAuth 
  ┃ ┣ 📂 dashboard       # Giao diện trang quản lý và biểu đồ
- ┃ ┗ 📂 login           # Giao diện đăng nhập/đăng ký
+ ┃ ┣ 📂 login           # Giao diện đăng nhập/đăng ký
+ ┃ ┗ 📂 update-password # Giao diện cập nhật mật khẩu
  ┣ 📂 components        # Chứa các UI Components tái sử dụng được (Biểu đồ, Form, Icons)
  ┣ 📂 lib               # Chứa cấu hình và hàm tiện ích
  ┃ ┣ 📜 auth.ts         # Logic xử lý User Session

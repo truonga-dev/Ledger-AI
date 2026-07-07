@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import styles from "./page.module.css";
 import Link from "next/link";
 import { IconTrendUp, IconTrendDown, IconCamera, IconReceipt, IconIncome, IconExpense } from "@/components/icons";
+import TransactionListClient from "@/components/dashboard/TransactionListClient";
 
 function fmtVND(n: number) {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(".0", "") + " tỷ";
@@ -30,7 +31,7 @@ function getMonthOptions() {
 export default async function TransactionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ month?: string; type?: string }>;
+  searchParams: Promise<{ month?: string; type?: string; limit?: string }>;
 }) {
   const user = await getUserSession();
   if (!user) return null;
@@ -39,6 +40,8 @@ export default async function TransactionsPage({
   const now = new Date();
   const monthStr = params.month ?? `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
   const [year, month] = monthStr.split("-").map(Number);
+
+  const limit = parseInt(params.limit || "50", 10);
 
   const transactions = await prisma.transaction.findMany({
     where: {
@@ -51,10 +54,38 @@ export default async function TransactionsPage({
     },
     include: { category: true },
     orderBy: { transactionDate: "desc" },
+    take: limit,
   });
 
-  const totalThu = transactions.filter(t => t.type === "THU").reduce((s,t) => s + Number(t.amount), 0);
-  const totalChi = transactions.filter(t => t.type === "CHI").reduce((s,t) => s + Number(t.amount), 0);
+  const totalCount = await prisma.transaction.count({
+    where: {
+      user: { email: user.email! },
+      transactionDate: {
+        gte: new Date(year, month-1, 1),
+        lte: new Date(year, month, 0, 23, 59, 59),
+      },
+      ...(params.type && params.type !== "all" ? { type: params.type as "THU" | "CHI" } : {}),
+    }
+  });
+
+  const hasMore = transactions.length < totalCount;
+
+  // Lấy tổng thu chi (chỉ tính trên bản ghi đã tải về hoặc nên tính tổng toàn bộ? Nên tính tổng toàn bộ)
+  const totalStats = await prisma.transaction.groupBy({
+    by: ['type'],
+    where: {
+      user: { email: user.email! },
+      transactionDate: {
+        gte: new Date(year, month-1, 1),
+        lte: new Date(year, month, 0, 23, 59, 59),
+      },
+      ...(params.type && params.type !== "all" ? { type: params.type as "THU" | "CHI" } : {}),
+    },
+    _sum: { amount: true }
+  });
+
+  const totalThu = Number(totalStats.find(s => s.type === "THU")?._sum.amount ?? 0);
+  const totalChi = Number(totalStats.find(s => s.type === "CHI")?._sum.amount ?? 0);
   const net = totalThu - totalChi;
 
   const monthOptions = getMonthOptions();
@@ -142,44 +173,14 @@ export default async function TransactionsPage({
 
       {/* ── List ── */}
       <div className={styles.content}>
-        {transactions.length === 0 ? (
-          <div className={styles.empty}>
-            <div className={styles.emptyIcon}>
-              <IconReceipt size={40} color="var(--text-muted)" />
-            </div>
-            <p className={styles.emptyText}>Không có giao dịch nào</p>
-            <p className={styles.emptyHint}>Chụp hóa đơn để bắt đầu ghi chép</p>
-            <div className={styles.emptyActions}>
-              <Link href="/dashboard/upload" className="btn btn-primary">
-                <IconCamera size={18} color="white" /> Chụp hóa đơn
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.list}>
-            {transactions.map((t) => (
-              <div key={t.id} className={styles.item}>
-                <div className={`${styles.itemIcon} ${t.type === "THU" ? styles.itemIconThu : styles.itemIconChi}`}>
-                  {t.type === "THU"
-                    ? <IconTrendUp size={18} />
-                    : <IconTrendDown size={18} />}
-                </div>
-                <div className={styles.itemLeft}>
-                  <span className={styles.itemDesc}>{t.description}</span>
-                  <div className={styles.itemMeta}>
-                    <span>{t.category?.name ?? "Khác"}</span>
-                    <span>·</span>
-                    <span>{fmtDate(new Date(t.transactionDate))}</span>
-                    {!t.isManual && <span className={styles.aiBadge}>✦ AI</span>}
-                  </div>
-                </div>
-                <span className={`${styles.itemAmount} ${t.type === "THU" ? styles.amtThu : styles.amtChi}`}>
-                  {t.type === "THU" ? "+" : "−"}{fmtVND(Number(t.amount))}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+        <TransactionListClient 
+          transactions={transactions.map(t => ({
+            ...t,
+            amount: Number(t.amount)
+          }))} 
+          hasMore={hasMore} 
+          currentLimit={limit} 
+        />
       </div>
     </div>
   );
