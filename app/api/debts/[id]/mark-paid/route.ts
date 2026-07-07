@@ -32,7 +32,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         where: { id },
         data: {
           isPaid: true,
-          paidAt: new Date(),
+          paidDate: new Date(),
         },
       });
 
