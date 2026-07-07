@@ -4,8 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 // PUT: Sửa khoản nợ
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const user = await getUserSession();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -15,13 +16,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const dbUser = await prisma.user.findUnique({ where: { email: user.email! } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const existingDebt = await prisma.debt.findUnique({ where: { id: params.id } });
+    const existingDebt = await prisma.debt.findUnique({ where: { id } });
     if (!existingDebt || existingDebt.userId !== dbUser.id) {
       return NextResponse.json({ error: "Không tìm thấy khoản nợ" }, { status: 404 });
     }
 
     const updatedDebt = await prisma.debt.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         debtorName,
         amount: amount ? Number(amount) : undefined,
@@ -38,20 +39,21 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE: Xóa khoản nợ
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const user = await getUserSession();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await prisma.user.findUnique({ where: { email: user.email! } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    const existingDebt = await prisma.debt.findUnique({ where: { id: params.id } });
+    const existingDebt = await prisma.debt.findUnique({ where: { id } });
     if (!existingDebt || existingDebt.userId !== dbUser.id) {
       return NextResponse.json({ error: "Không tìm thấy khoản nợ" }, { status: 404 });
     }
 
-    await prisma.debt.delete({ where: { id: params.id } });
+    await prisma.debt.delete({ where: { id } });
 
     revalidatePath("/dashboard", "layout");
     return NextResponse.json({ success: true });
