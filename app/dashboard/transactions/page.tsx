@@ -5,6 +5,7 @@ import Link from "next/link";
 import { IconTrendUp, IconTrendDown, IconCamera, IconReceipt, IconIncome, IconExpense } from "@/components/icons";
 import TransactionListClient from "@/components/dashboard/TransactionListClient";
 import ExportExcelButton from "@/components/dashboard/ExportExcelButton";
+import FilterTabs from "@/components/dashboard/FilterTabs";
 
 function fmtVND(n: number) {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(".0", "") + " tỷ";
@@ -152,26 +153,7 @@ export default async function TransactionsPage({
         </div>
 
         {/* Filter Tabs */}
-        <div className={styles.tabs}>
-          {[
-            { value: "all", label: "Tất cả", icon: null },
-            { value: "THU", label: "Thu", icon: <IconIncome size={14} /> },
-            { value: "CHI", label: "Chi", icon: <IconExpense size={14} /> },
-          ].map(({ value, label, icon }) => (
-            <Link
-              key={value}
-              href={`/dashboard/transactions?month=${monthStr}&type=${value}`}
-              className={`${styles.tab} ${typeFilter === value ? styles.tabActive : ""}`}
-            >
-              {icon && (
-                <span className={`${styles.tabIcon} ${value === "THU" ? styles.tabIconThu : value === "CHI" ? styles.tabIconChi : ""}`}>
-                  {icon}
-                </span>
-              )}
-              {label}
-            </Link>
-          ))}
-        </div>
+        <FilterTabs monthStr={monthStr} typeFilter={typeFilter} />
       </div>
 
       {/* ── List ── */}

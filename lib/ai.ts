@@ -128,6 +128,35 @@ Trả về JSON ĐÚNG FORMAT sau, KHÔNG thêm text hay markdown:
   "confidence": 0.9
 }`;
 
+// Prompt xử lý Văn bản (Chat)
+const TEXT_TRANSACTION_PROMPT = `Bạn là trợ lý kế toán AI cho hộ kinh doanh tại Việt Nam.
+Nhiệm vụ: Phân tích đoạn chat nhập liệu của người dùng, bóc tách thành các giao dịch riêng biệt.
+
+Quy tắc đọc số tiền:
+- "k" = nghìn đồng (50k = 50,000 đồng)
+- "tr" = triệu đồng (2tr = 2,000,000 đồng)
+- Mặc định là VND (số nguyên).
+
+Quy tắc phân loại (THU / CHI):
+- Mua hàng, trả tiền, đóng tiền, nộp phí -> CHI
+- Bán hàng, nhận tiền, khách trả, thu -> THU
+- Danh mục CHI: "Tiền hàng", "Điện nước", "Lương nhân viên", "Thuê mặt bằng", "Vận chuyển", "Ăn uống", "Khác - Chi"
+- Danh mục THU: "Bán hàng", "Dịch vụ", "Khác - Thu"
+
+Trả về JSON đúng format sau, KHÔNG thêm text giải thích:
+{
+  "items": [
+    {
+      "description": "Tên món hàng/dịch vụ",
+      "amount": 100000,
+      "quantity": 1,
+      "type": "THU",
+      "category": "Bán hàng"
+    }
+  ]
+}
+`;
+
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
 async function urlToGenerativePart(url: string, mimeType: string) {
@@ -150,7 +179,7 @@ async function processAllInOneGemini(imageUrl: string): Promise<SinglePassResult
   if (!process.env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
   
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash",
+    model: "gemini-1.5-flash",
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.1,
@@ -192,7 +221,7 @@ async function processAllInOneOpenRouter(imageUrl: string): Promise<SinglePassRe
       "X-Title": "LedgerAI",
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-4-maverick:free",
+      model: "meta-llama/llama-3.2-90b-vision-instruct:free",
       messages: [
         {
           role: "user",
@@ -317,4 +346,52 @@ export async function processReceiptImage(imageUrl: string): Promise<{
   const classifiedItems = await classifyItemsGroq(ocrResult.items);
   console.log("[AI] ✅ Groq Phân loại thành công!");
   return { ocrResult, classifiedItems };
+}
+
+/**
+ * Xử lý văn bản (Chat) thành danh sách giao dịch
+ */
+export async function processTextToTransactions(text: string, shopType: string): Promise<SinglePassResult> {
+  console.log("[AI] Xử lý Chat Text (ShopType: " + shopType + "): " + text);
+  try {
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: TEXT_TRANSACTION_PROMPT + "\nLoại hình kinh doanh hiện tại: " + shopType },
+        { role: "user", content: text },
+      ],
+      response_format: { type: "json_object" }, // Hoặc có thể yêu cầu JSON array nhưng llama thích JSON object hơn, ta sẽ bọc lại
+      temperature: 0.1,
+      max_tokens: 1024,
+    });
+
+    const content = response.choices[0]?.message?.content || "";
+    let items: ClassifiedItem[] = [];
+    try {
+      const parsed = JSON.parse(content);
+      items = Array.isArray(parsed) ? parsed : (parsed.items ?? parsed.data ?? []);
+    } catch {
+      // Thử dùng regex trích xuất mảng JSON nếu groq không trả về chuẩn
+      const match = content.match(/\\[[\\s\\S]*\\]/);
+      if (match) {
+        items = JSON.parse(match[0]);
+      } else {
+        throw new Error("Không tìm thấy JSON hợp lệ trong câu trả lời.");
+      }
+    }
+
+    // Gán date mặc định cho các items vì chat không có ảnh
+    const formattedItems = items.map((i) => ({
+      ...i,
+      date: i.date || new Date().toISOString().split("T")[0],
+    }));
+
+    return {
+      items: formattedItems,
+      confidence: 0.95, // Text processing thường độ chính xác cao
+    };
+  } catch (error) {
+    console.error("[AI] Lỗi khi xử lý văn bản:", error);
+    throw error;
+  }
 }

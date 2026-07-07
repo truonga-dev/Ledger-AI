@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ClassifiedItem } from "@/lib/ai";
+import { revalidatePath } from "next/cache";
 
 // GET /api/transactions — lấy danh sách giao dịch
 export async function GET(request: NextRequest) {
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest) {
       created.push(tx);
     }
 
+    revalidatePath("/dashboard");
     return NextResponse.json({ count: created.length, success: true });
   } catch (err: any) {
     console.error("POST /api/transactions error:", err);
@@ -136,6 +138,7 @@ export async function DELETE(request: NextRequest) {
       await prisma.transaction.deleteMany({
         where: { user: { email: user.email! } },
       });
+      revalidatePath("/dashboard");
       return NextResponse.json({ success: true });
     }
 
@@ -145,6 +148,7 @@ export async function DELETE(request: NextRequest) {
       where: { id, user: { email: user.email! } },
     });
 
+    revalidatePath("/dashboard");
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
@@ -184,6 +188,7 @@ export async function PUT(request: NextRequest) {
       }
     });
 
+    revalidatePath("/dashboard");
     return NextResponse.json({ success: true, transaction: updated });
   } catch (err: any) {
     console.error("PUT /api/transactions error:", err);

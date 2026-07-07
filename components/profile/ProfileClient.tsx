@@ -354,6 +354,19 @@ export default function ProfileClient({ email, shopName: initShopName, shopType,
       ],
     },
     {
+      title: "Quản lý",
+      items: [
+        {
+          Icon: IconStore,
+          label: "Sổ Ghi Nợ",
+          sub: "Quản lý các khoản chưa thu/đã thu",
+          iconBg: "#ecfccb",
+          iconColor: "#65a30d",
+          action: () => router.push("/dashboard/profile/debts"),
+        }
+      ]
+    },
+    {
       title: "Ứng dụng",
       items: [
         {
@@ -543,8 +556,8 @@ export default function ProfileClient({ email, shopName: initShopName, shopType,
             : <IconLogout size={18} />}
           {loggingOut ? "Đang đăng xuất..." : "Đăng xuất"}
         </button>
-
-        <p className={styles.version}>LedgerAI v1.0 · Powered by Groq AI</p>
+        
+        <p className={styles.version}>LedgerAI v2.0 · Powered by T7A Dev</p>
       </div>
 
       {/* ── Settings Bottom Sheet ── */}

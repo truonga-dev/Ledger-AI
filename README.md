@@ -1,8 +1,18 @@
-# 🧾 Ledger AI — Sổ Thu Chi Thông Minh
+# 🧾 Ledger AI v2.0 — Sổ Thu Chi Thông Minh
 
 Ledger AI là ứng dụng quản lý tài chính cá nhân/cửa hàng nhỏ, tích hợp **trí tuệ nhân tạo đa tầng** giúp tự động đọc hóa đơn, phân loại thu chi và theo dõi dòng tiền theo thời gian thực.
 
 > **Lưu ý:** Đây là hệ thống riêng tư (Private System), thiết kế cho mục đích cá nhân. Không chấp nhận Pull Requests từ bên ngoài.
+
+---
+
+## 🚀 Cập nhật Mới trong Bản v2.0
+
+- **Sổ Ghi Nợ (Debt Management):** Theo dõi công nợ, ai nợ mình, mình nợ ai, dễ dàng ghi nhận trạng thái đã thanh toán.
+- **Tối Ưu Database Connection:** Sửa lỗi treo kết nối Prisma bằng việc tách biệt cổng pooling (`DATABASE_URL`) và cổng trực tiếp (`DIRECT_URL`).
+- **Realtime Dashboard:** Xóa cache thông minh giúp giao diện cập nhật ngay lập tức các chỉ số (Tổng chi, Thu, Streak) mà không cần tải lại trang.
+- **Sửa Lỗi Giao Diện Chế Độ Tối (Dark Mode):** Màu chữ và nền các nút chức năng tự động tương thích 100% môi trường sáng/tối.
+- **Powered by T7A Dev:** Tối ưu hóa toàn diện hiệu năng API và giao diện người dùng.
 
 ---
 

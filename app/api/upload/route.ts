@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
 
     // Upload ảnh lên Supabase Storage
     const adminClient = createSupabaseAdminClient();
-    const fileName = `${user.id}/${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, "_")}`;
+    const folderName = user.id || user.email?.split("@")[0] || "unknown";
+    const fileName = `${folderName}/${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, "_")}`;
     const buffer = await file.arrayBuffer();
 
     const { error: uploadError } = await adminClient.storage

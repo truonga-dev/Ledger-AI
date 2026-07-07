@@ -8,7 +8,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    // DATABASE_URL dùng pooler port 6543 — tránh bị firewall block
-    url: process.env["DATABASE_URL"],
+    // DIRECT_URL dùng port 5432 để thực hiện db push/migrate (CLI)
+    // Ứng dụng (PrismaClient) vẫn dùng DATABASE_URL (port 6543) thông qua adapter-pg
+    url: process.env["DIRECT_URL"],
   },
 });

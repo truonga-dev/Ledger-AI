@@ -39,6 +39,24 @@ function IconZoomIn({ size = 16 }: { size?: number }) {
     </svg>
   );
 }
+function IconSend({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13" />
+      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+    </svg>
+  );
+}
+function IconSparkles({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3v18" />
+      <path d="m3 12 18 0" />
+      <path d="m18 6-12 12" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
 
 const TIPS = [
   { Icon: IconLightbulb, text: "Chụp nơi đủ sáng, tránh bóng tối và phản sáng" },
@@ -55,6 +73,33 @@ export default function UploadPage() {
   const [items, setItems] = useState<ClassifiedItem[]>([]);
   const [confidence, setConfidence] = useState(1);
   const [error, setError] = useState("");
+  const [chatText, setChatText] = useState("");
+
+  async function handleChatSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!chatText.trim()) return;
+
+    setState("uploading");
+    setError("");
+
+    try {
+      const res = await fetch("/api/transactions/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: chatText })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Lỗi xử lý chat");
+      
+      setItems(data.items || []);
+      setConfidence(data.confidence || 0.9);
+      setState("confirming");
+      setChatText(""); // Clear chat
+    } catch (err: any) {
+      setError(err.message);
+      setState("idle");
+    }
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -164,6 +209,71 @@ export default function UploadPage() {
 
           {error && <p className={styles.error}>{error}</p>}
 
+          {/* Chat input */}
+          <form onSubmit={handleChatSubmit} style={{ marginTop: "24px" }}>
+            <div style={{ display: "flex", alignItems: "center", marginBottom: "8px", gap: "6px", color: "var(--text-primary)" }}>
+              <IconBolt size={16} />
+              <span style={{ fontSize: "14px", fontWeight: 600 }}>Trợ lý AI</span>
+            </div>
+            <div style={{ 
+              position: "relative",
+              borderRadius: "16px",
+              background: "linear-gradient(145deg, #1e1e24 0%, #15151a 100%)",
+              border: "1px solid #3f3f46",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+              transition: "all 0.2s ease"
+            }}>
+              <textarea
+                value={chatText}
+                onChange={e => setChatText(e.target.value)}
+                placeholder="Nhập giao dịch... VD: Mua thịt gà 500g 35k"
+                style={{
+                  width: "100%",
+                  minHeight: "100px",
+                  padding: "16px",
+                  paddingRight: "50px",
+                  borderRadius: "16px",
+                  border: "none",
+                  backgroundColor: "transparent",
+                  color: "#f8fafc",
+                  fontSize: "15px",
+                  lineHeight: "1.5",
+                  resize: "none",
+                  outline: "none"
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (chatText.trim()) handleChatSubmit(e);
+                  }
+                }}
+              />
+              <button 
+                type="submit"
+                disabled={!chatText.trim()}
+                style={{
+                  position: "absolute",
+                  bottom: "12px",
+                  right: "12px",
+                  background: chatText.trim() ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" : "#27272a",
+                  color: chatText.trim() ? "#fff" : "#52525b",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: "36px",
+                  height: "36px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: chatText.trim() ? "pointer" : "not-allowed",
+                  boxShadow: chatText.trim() ? "0 2px 10px rgba(79, 70, 229, 0.4)" : "none",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <IconSend size={16} />
+              </button>
+            </div>
+          </form>
+
           {/* Manual entry */}
           <button
             className={styles.manualBtn}
@@ -201,8 +311,8 @@ export default function UploadPage() {
             <div className={styles.aiOrb}>
               <IconBolt size={26} />
             </div>
-            <p className={styles.loadingText}>AI đang đọc hóa đơn...</p>
-            <p className={styles.loadingSub}>Gemini 2.5 Flash đang phân tích...</p>
+            <p className={styles.loadingText}>AI đang xử lý dữ liệu...</p>
+            <p className={styles.loadingSub}>Đang phân tích thông tin...</p>
             <div className={styles.dots}>
               <span /><span /><span />
             </div>
