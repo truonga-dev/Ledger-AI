@@ -199,9 +199,14 @@ export default function ProfileClient({ email, shopName: initShopName, shopType,
 
   async function handleLogout() {
     setLoggingOut(true);
-    await supabase.auth.signOut();
-    await logoutAction();
-    window.location.href = "/login";
+    try {
+      await supabase.auth.signOut();
+      await logoutAction();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      window.location.href = "/login";
+    }
   }
 
   async function handleUploadImage(file: File, type: "avatar" | "background" | "logo") {
