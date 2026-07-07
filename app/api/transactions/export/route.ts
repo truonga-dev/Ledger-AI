@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import ExcelJS from "exceljs";
 
 export async function GET(req: Request) {
   try {
@@ -31,7 +32,6 @@ export async function GET(req: Request) {
     });
 
     // Sử dụng exceljs để tạo file Excel đẹp mắt
-    const ExcelJS = require('exceljs');
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'LedgerAI';
     const worksheet = workbook.addWorksheet('Giao dịch');
