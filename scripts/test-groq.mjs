@@ -34,7 +34,7 @@ async function testOcr() {
 
   try {
     const response = await groq.chat.completions.create({
-      model: "llama-3.2-11b-vision-preview",
+      model: "llama-3.2-90b-vision-preview",
       messages: [
         {
           role: "system",
