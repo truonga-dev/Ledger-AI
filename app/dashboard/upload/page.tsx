@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ConfirmForm from "@/components/upload/ConfirmForm";
 import { IconCamera, IconScan, IconPlus, IconImage } from "@/components/icons";
@@ -58,6 +58,16 @@ function IconSparkles({ size = 18 }: { size?: number }) {
   );
 }
 
+function IconMic({ size = 18, active = false }: { size?: number, active?: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: active ? '#ef4444' : 'currentColor' }}>
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <line x1="12" y1="19" x2="12" y2="22" />
+    </svg>
+  );
+}
+
 const TIPS = [
   { Icon: IconLightbulb, text: "Chụp nơi đủ sáng, tránh bóng tối và phản sáng" },
   { Icon: IconSquare,    text: "Để hóa đơn phẳng, không bị nhăn hay gập" },
@@ -68,12 +78,51 @@ export default function UploadPage() {
   const router = useRouter();
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
   const [state, setState] = useState<UploadState>("idle");
   const [preview, setPreview] = useState<string | null>(null);
   const [items, setItems] = useState<ClassifiedItem[]>([]);
   const [confidence, setConfidence] = useState(1);
   const [error, setError] = useState("");
   const [chatText, setChatText] = useState("");
+  const [isListening, setIsListening] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = false;
+        recognitionRef.current.interimResults = false;
+        recognitionRef.current.lang = "vi-VN";
+
+        recognitionRef.current.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          setChatText((prev) => (prev ? prev + " " + transcript : transcript));
+        };
+
+        recognitionRef.current.onerror = (event: any) => {
+          console.error("Speech recognition error", event.error);
+          setIsListening(false);
+        };
+
+        recognitionRef.current.onend = () => {
+          setIsListening(false);
+        };
+      }
+    }
+  }, []);
+
+  const toggleListening = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
 
   async function handleChatSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -248,29 +297,46 @@ export default function UploadPage() {
                   }
                 }}
               />
-              <button 
-                type="submit"
-                disabled={!chatText.trim()}
-                style={{
-                  position: "absolute",
-                  bottom: "12px",
-                  right: "12px",
-                  background: chatText.trim() ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" : "#27272a",
-                  color: chatText.trim() ? "#fff" : "#52525b",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: chatText.trim() ? "pointer" : "not-allowed",
-                  boxShadow: chatText.trim() ? "0 2px 10px rgba(79, 70, 229, 0.4)" : "none",
-                  transition: "all 0.2s ease"
-                }}
-              >
-                <IconSend size={16} />
-              </button>
+              <div style={{ position: "absolute", bottom: "12px", right: "12px", display: "flex", gap: "8px" }}>
+                <button 
+                  type="button"
+                  onClick={toggleListening}
+                  style={{
+                    background: isListening ? "#fee2e2" : "#27272a",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  <IconMic size={16} active={isListening} />
+                </button>
+                <button 
+                  type="submit"
+                  disabled={!chatText.trim()}
+                  style={{
+                    background: chatText.trim() ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" : "#27272a",
+                    color: chatText.trim() ? "#fff" : "#52525b",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: chatText.trim() ? "pointer" : "not-allowed",
+                    boxShadow: chatText.trim() ? "0 2px 10px rgba(79, 70, 229, 0.4)" : "none",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  <IconSend size={16} />
+                </button>
+              </div>
             </div>
           </form>
 

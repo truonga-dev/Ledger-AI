@@ -39,11 +39,11 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 const OCR_SYSTEM_PROMPT = `Bạn là một trợ lý đọc hóa đơn và sổ ghi chép cho hộ kinh doanh nhỏ tại Việt Nam.
 Nhiệm vụ: Đọc kỹ ảnh hóa đơn hoặc ghi chú viết tay, trích xuất TẤT CẢ các khoản mục có số tiền và số lượng.
 
-Quy tắc đọc số tiền Việt Nam:
-- "k" hoặc "K" = nghìn đồng (50k = 50,000 đồng)
-- "tr" hoặc "triệu" = triệu đồng (2tr = 2,000,000 đồng)
-- "đ" hoặc không có đơn vị = đồng
-- Chuẩn hóa TẤT CẢ amounts về đơn vị đồng (VND số nguyên)
+Quy tắc đọc số tiền Việt Nam và Ngoại tệ:
+- "k" hoặc "K" = nghìn đồng (50k = 50,000 đồng), "tr" hoặc "triệu" = triệu đồng.
+- NẾU LÀ NGOẠI TỆ, hãy tự động quy đổi ra VNĐ theo tỷ giá sau: 1 USD = 25400, 1 EUR = 27500, 1 JPY = 170, 1 CNY = 3500, 1 THB = 750, 1 KRW = 18. Ghi chú gốc vào description (vd: "Mua hàng (50 USD)").
+- NẾU LÀ BILL CHUYỂN KHOẢN (VietQR, Momo, Banking): lấy số tiền chuyển làm amount, lấy "CK: [Tên người nhận]" làm description.
+- Chuẩn hóa TẤT CẢ amounts về đơn vị đồng (VND số nguyên).
 
 Trường quantity (số lượng):
 - Nếu hóa đơn có ghi rõ số lượng (vd: x2, 3 cái, 5kg), hãy trích xuất vào trường quantity.
@@ -98,9 +98,11 @@ Trả về mảng JSON sau, KHÔNG bọc trong object, KHÔNG thêm giải thíc
 const GEMINI_SINGLE_PASS_PROMPT = `Bạn là một chuyên gia kế toán và đọc hóa đơn tại Việt Nam.
 Nhiệm vụ: Đọc ảnh hóa đơn/ghi chú, trích xuất CÁC KHOẢN MỤC và PHÂN LOẠI chúng ngay lập tức (THU hay CHI).
 
-Quy tắc đọc số tiền:
+Quy tắc đọc số tiền và Ngoại tệ:
 - "k" = nghìn đồng, "tr" = triệu đồng. Chuẩn hóa về VND (vd: 50k -> 50000).
 - Nếu không ghi số lượng, mặc định quantity = 1.
+- NẾU LÀ NGOẠI TỆ, quy đổi ra VNĐ theo tỷ giá: 1 USD=25400, 1 EUR=27500, 1 JPY=170, 1 CNY=3500, 1 THB=750, 1 KRW=18. Thêm chú thích vào description (vd: "Tên hàng (50 USD)").
+- NẾU LÀ BILL CHUYỂN KHOẢN (VietQR, Banking): lấy số tiền đã chuyển làm amount, "CK: [Tên người nhận]" làm description. Phân loại là CHI. Nếu là nhận tiền (thông báo số dư tăng) thì phân loại THU.
 
 Quy tắc trích xuất NGÀY THÁNG (CỰC KỲ QUAN TRỌNG):
 - Tìm ngày tháng trên hóa đơn (dạng: 16/11/2014, 2014-11-16, ngày 16 tháng 11, ...).
@@ -132,9 +134,9 @@ Trả về JSON ĐÚNG FORMAT sau, KHÔNG thêm text hay markdown:
 const TEXT_TRANSACTION_PROMPT = `Bạn là trợ lý kế toán AI cho hộ kinh doanh tại Việt Nam.
 Nhiệm vụ: Phân tích đoạn chat nhập liệu của người dùng, bóc tách thành các giao dịch riêng biệt.
 
-Quy tắc đọc số tiền:
-- "k" = nghìn đồng (50k = 50,000 đồng)
-- "tr" = triệu đồng (2tr = 2,000,000 đồng)
+Quy tắc đọc số tiền và Ngoại tệ:
+- "k" = nghìn đồng (50k = 50,000 đồng), "tr" = triệu đồng.
+- NẾU LÀ NGOẠI TỆ, hãy tính toán và quy đổi ra VNĐ theo tỷ giá: 1 USD=25400, 1 EUR=27500, 1 JPY=170, 1 CNY=3500. Kèm ghi chú ngoại tệ vào description (vd: "Đăng ký Canva (12 USD)").
 - Mặc định là VND (số nguyên).
 
 Quy tắc phân loại (THU / CHI):

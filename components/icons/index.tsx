@@ -403,3 +403,14 @@ export function IconArrowLeft({ size = defaults.size, color = defaults.color, cl
     </svg>
   );
 }
+
+export function IconSparkles({ size = defaults.size, color = defaults.color, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 3v18" />
+      <path d="m3 12 18 0" />
+      <path d="m18 6-12 12" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}

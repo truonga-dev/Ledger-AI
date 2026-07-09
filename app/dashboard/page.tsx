@@ -7,7 +7,7 @@ import MonthlyChart from "@/components/dashboard/MonthlyChart";
 import QuickInsight from "@/components/dashboard/QuickInsight";
 import DashboardClient from "@/components/dashboard/DashboardClient";
 import styles from "./page.module.css";
-import { IconTrendUp, IconTrendDown, IconTrophy, IconWarning } from "@/components/icons";
+import { IconTrendUp, IconTrendDown, IconTrophy, IconWarning, IconSparkles } from "@/components/icons";
 import ThemeToggle from "@/components/ThemeToggle";
 function getMonthRange(date: Date) {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -231,6 +231,33 @@ export default async function DashboardPage() {
           topCategoryAmount={topCat?.total ?? 0}
           streakDays={streak}
         />
+
+        {/* AI Advisor Link */}
+        <div className={styles.section}>
+          <Link href="/dashboard/insights" style={{ display: 'block', textDecoration: 'none' }}>
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%)',
+              border: '1px solid rgba(99, 102, 241, 0.2)',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ background: '#transparent', width: '40px', height: '40px', borderRadius: '10px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, boxShadow: '0 4px 10px rgba(79, 70, 229, 0.3)' }}>
+                  <img src="/icon.png" alt="LedgerAI Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--brand-600)' }}>Cố vấn Tài chính AI</h3>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Phân tích thu chi, nhận lời khuyên</p>
+                </div>
+              </div>
+              <div style={{ color: 'var(--brand-500)' }}>→</div>
+            </div>
+          </Link>
+        </div>
 
         {/* Month Goal */}
         <DashboardClient
