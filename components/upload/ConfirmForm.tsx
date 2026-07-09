@@ -18,7 +18,13 @@ interface Props {
 }
 
 export default function ConfirmForm({ items: initialItems, confidence, preview, saving, onSave, onCancel }: Props) {
-  const [items, setItems] = useState<ClassifiedItem[]>(initialItems);
+  const [items, setItems] = useState<ClassifiedItem[]>(() => {
+    const today = new Intl.DateTimeFormat('en-CA').format(new Date());
+    return initialItems.map(item => ({
+      ...item,
+      date: item.date || today
+    }));
+  });
 
   function update(index: number, field: keyof ClassifiedItem, value: any) {
     setItems((prev) =>
@@ -39,9 +45,10 @@ export default function ConfirmForm({ items: initialItems, confidence, preview, 
   }
 
   function addItem() {
+    const today = new Intl.DateTimeFormat('en-CA').format(new Date());
     setItems((prev) => [
       ...prev,
-      { description: "", amount: 0, quantity: 1, date: null, type: "CHI", category: "Khác - Chi" },
+      { description: "", amount: 0, quantity: 1, date: today, type: "CHI", category: "Khác - Chi" },
     ]);
   }
 

@@ -381,9 +381,10 @@ export async function processTextToTransactions(text: string, shopType: string):
     }
 
     // Gán date mặc định cho các items vì chat không có ảnh
+    const todayStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
     const formattedItems = items.map((i) => ({
       ...i,
-      date: i.date || new Date().toISOString().split("T")[0],
+      date: i.date || todayStr,
     }));
 
     return {
