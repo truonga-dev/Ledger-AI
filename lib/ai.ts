@@ -179,7 +179,7 @@ async function processAllInOneGemini(imageUrl: string): Promise<SinglePassResult
   if (!process.env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
   
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.1,
@@ -221,7 +221,7 @@ async function processAllInOneOpenRouter(imageUrl: string): Promise<SinglePassRe
       "X-Title": "LedgerAI",
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-3.2-90b-vision-instruct:free",
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
       messages: [
         {
           role: "user",
@@ -261,7 +261,7 @@ async function processAllInOneOpenRouter(imageUrl: string): Promise<SinglePassRe
  */
 async function extractFromImageGroq(imageUrl: string): Promise<OcrResult> {
   const response = await groq.chat.completions.create({
-    model: "llama-3.2-90b-vision-preview",
+    model: "meta-llama/llama-4-scout-17b-16e-instruct",
     messages: [
       { role: "system", content: OCR_SYSTEM_PROMPT },
       { role: "user", content: [
