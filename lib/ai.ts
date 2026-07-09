@@ -261,7 +261,7 @@ async function processAllInOneOpenRouter(imageUrl: string): Promise<SinglePassRe
  */
 async function extractFromImageGroq(imageUrl: string): Promise<OcrResult> {
   const response = await groq.chat.completions.create({
-    model: "llama-3.2-90b-vision-preview",
+    model: "llama-3.2-90b-vision-instruct",
     messages: [
       { role: "system", content: OCR_SYSTEM_PROMPT },
       { role: "user", content: [
